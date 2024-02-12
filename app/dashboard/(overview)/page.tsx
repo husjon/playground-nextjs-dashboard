@@ -7,7 +7,7 @@ import {
   fetchFilteredInvoices,
   fetchLatestInvoices,
   fetchRevenue,
-} from '../lib/data';
+} from '../../lib/data';
 
 export default async function Page() {
   const revenue = await fetchRevenue();
