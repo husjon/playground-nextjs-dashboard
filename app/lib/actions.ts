@@ -2,6 +2,8 @@
 
 import { z } from 'zod';
 import { sql } from '@vercel/postgres';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -28,4 +30,11 @@ export async function createInvoice(formData: FormData) {
     INSERT INTO invoices (customer_id, amount, status, date)
     VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
   `;
+
+  // Next.js uses Client-side Route caching so going back to `/dashboard/invoices` will show the old data
+  // `revalidatePath` clears this cache so that it can be fetched again
+  revalidatePath('/dashboard/invoices');
+
+  // For good measure we'll redirect the user back to `/dashboard/invoices` after the invoice has been created
+  redirect('/dashboard/invoices');
 }
